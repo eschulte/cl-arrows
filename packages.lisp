@@ -4,6 +4,8 @@
     ;; thrushing macros
     #:->
     #:->>
+    #:&>
+    #:&>>
     ;; diamond wand/spear
     #:-<>
     #:-<>>))

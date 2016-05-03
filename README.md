@@ -33,6 +33,17 @@ known as diamond wand.
 Like `-<>`, but if a form in FORMS has no symbols named `<>` as top-level element,
 insertion is done like in `->>`.  Also known as diamond spear.
 
+[macro]  
+`&>` initial-form _&rest_ forms => results
+
+Like `->`, but each form is guarded by a `when`.  Then can be useful
+to short-circuit evaluation when results become `nil`, avoiding
+efficiency or even runtime errors when using forms which require
+non-nil inputs.
+
+[macro]  
+Like `->>`, but each form is guarded by a `when`.
+
 ## Examples
 
     (-> 3
@@ -57,6 +68,12 @@ insertion is done like in `->>`.  Also known as diamond spear.
       (-<> (incf x)     ; (let ((r (incf x)))
            (+ <> <>)))  ;   (+ r r))
     => 8
+
+    (&>> (list 1 2 3)
+         (mapcar (lambda (x) (* 2 x)))
+         (remove-if #'evenp)
+         (cons :here))
+    => NIL
 
 ## Todo 
 

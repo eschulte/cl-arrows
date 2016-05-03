@@ -19,6 +19,27 @@ into the next, etc., before evaluation.  FORMS are treated as list designators."
           forms
           :initial-value initial-form))
 
+(defun guarded-inserter (insert-fun)
+  (lambda (acc next)
+    (let ((guarded-sym (gensym "guarded-")))
+      `(let ((,guarded-sym ,acc))
+         (when ,guarded-sym
+           ,(if (listp next)
+                (funcall insert-fun guarded-sym next)
+                (list next guarded-sym)))))))
+
+(defmacro &> (initial-form &rest forms)
+  "Like ->, but each form is guarded by a when."
+  (reduce (guarded-inserter #'insert-first)
+          forms
+          :initial-value initial-form))
+
+(defmacro &>> (initial-form &rest forms)
+  "Like ->>, but each form is guarded by a when."
+  (reduce (guarded-inserter #'insert-last)
+          forms
+          :initial-value initial-form))
+
 (defun diamond-inserter (insert-fun)
   (simple-inserter (lambda (acc next)
                      (case (count-if #'<>p next)
